@@ -1,3 +1,18 @@
+#define ULONG64 unsigned long long
+
+ULONG64 TimerStart;
+ULONG64 TimerStop;
+
+void StartTimer(void)
+{
+	TimerStart = __rdtsc();
+}
+
+void StopTimer(void)
+{
+	TimerStop = __rdtsc();
+}
+
 #include "time.h"
 
 ULONG64 GetProcessorSpeed()
@@ -24,4 +39,17 @@ ULONG64 GetProcessorSpeed()
 	ULONG64 MHZ = ((HZ + (ULONG64)5000000) / (ULONG64)1000000);
 
 	return MHZ;
+}
+
+void main()
+{
+	ULONG64 timeConversion = GetProcessorSpeed();
+	cout << "CPU speed (MHZ): " << timeConversion << "\n\n";
+	StartTimer();
+	exampleFunctionToProfile();
+	StopTimer();
+
+	double diff = TimerStop - TimerStart;
+	
+	cout << "exampleFunctionToProfile() took " << ((diff / (double)timeConversion)) * 1000 << " nanoSeconds\n\n";
 }
